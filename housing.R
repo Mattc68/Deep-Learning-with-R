@@ -40,8 +40,12 @@ length(indices)
 folds <- cut(1:length(indices), breaks = k, labels = FALSE)
 folds
 
-num_epochs <- 100
-all_scores <- c()
+#num_epochs <- 100
+# Average MAE is around 2.4 ($2400) which is fairly large
+num_epochs <- 500
+
+#all_scores <- c()
+all_mae_history <- NULL
 
 for(i in 1:k){
   
@@ -56,7 +60,25 @@ for(i in 1:k){
   
   model <- build_model()
   
-  model %>% fit(partial_train_x, partial_train_y, epochs = num_epochs, batch_size = 1, verbose = 0)
-  results <- model %>% evaluate(val_data, val_targets, verbose = 0)
-  all_scores <- c(all_scores, results$mean_absolute_error)
+  #history <- model %>% fit(partial_train_x, partial_train_y, epochs = num_epochs, batch_size = 1, verbose = 0)
+  history <- model %>% fit(partial_train_x, partial_train_y, epochs = num_epochs, batch_size = 1, validation_data = list(val_data, val_targets), verbose = 0)
+  
+  # history <- model %>% evaluate(val_data, val_targets, verbose = 0)
+  # all_scores <- c(all_scores, results$mean_absolute_error)
+  
+  mae_history <- history$metrics$val_mean_absolute_error
+  all_mae_history <- rbind(all_mae_history, mae_history)
 }
+
+average_mae_history <- data.frame(
+  epoch = seq(1:ncol(all_mae_history)),
+  validation_mae = apply(all_mae_history, 2, mean)
+)
+
+library(ggplot2)
+ggplot(average_mae_history) + geom_smooth(aes(epoch, validation_mae))
+
+## Final Model
+model <- build_model()
+model %>% fit(train_x, train_y, epochs = 130, batch_size = 16, verbose = 0)
+result <- model %>% evaluate(test_x, test_y)
