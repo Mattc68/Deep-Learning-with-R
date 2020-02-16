@@ -82,3 +82,4 @@ ggplot(average_mae_history) + geom_smooth(aes(epoch, validation_mae))
 model <- build_model()
 model %>% fit(train_x, train_y, epochs = 130, batch_size = 16, verbose = 0)
 result <- model %>% evaluate(test_x, test_y)
+result$mean_absolute_error
