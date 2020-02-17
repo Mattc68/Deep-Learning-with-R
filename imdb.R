@@ -26,9 +26,28 @@ test_x <- vectorize_sequence(test_x)
 train_y <- as.numeric(train_y)
 test_y <- as.numeric(test_y)
 
+# model <- keras_model_sequential() %>% 
+#   layer_dense(units = 16, activation = "relu", input_shape = c(10000)) %>% 
+#   layer_dense(units = 16, activation = "relu") %>% 
+#   layer_dense(units = 1, activation = "sigmoid")
+
+# Weight regularization - adds a cost to higher weights and creates simpler models
+# L1 cost is proportional to abs of weight coef
+# L2 (weight decay) cost is proportional to square of the weight coef
+#   - regularizer_l2(0.001) adds 0.001 * weight_coefficient_value to total loss of network (only applies to training loss, test will be less)
+
+# model <- keras_model_sequential() %>% 
+#   layer_dense(units = 16, kernel_regularizer = regularizer_l2(0.001), activation = "relu", input_shape = c(10000)) %>% 
+#   layer_dense(units = 16, kernel_regularizer = regularizer_l2(0.001),activation = "relu") %>% 
+#   layer_dense(units = 1, activation = "sigmoid")
+
+# Regularization - Dropout - randomly drops a number of features from the output
+# Usually between 0.2 and 0.5
 model <- keras_model_sequential() %>% 
   layer_dense(units = 16, activation = "relu", input_shape = c(10000)) %>% 
+  layer_dropout(rate = 0.5) %>% 
   layer_dense(units = 16, activation = "relu") %>% 
+  layer_dropout(rate = 0.5) %>% 
   layer_dense(units = 1, activation = "sigmoid")
 
 model %>% compile(
