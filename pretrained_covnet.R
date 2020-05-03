@@ -44,7 +44,7 @@ extract_features <- function(directory, sample_count){
     i <- i + 1
     if(i * batch_size >= sample_count)
       break
-
+    
   }
   
   return(list(features = features, labels = labels))
@@ -75,8 +75,5 @@ model %>% compile(
 
 history <- model %>% fit(train$features, train$labels, epochs = 30, batch_size = 20, 
                          validation_data = list(val$features, val$labels))
-
-
-
 
 
