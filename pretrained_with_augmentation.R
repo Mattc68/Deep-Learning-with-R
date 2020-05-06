@@ -16,6 +16,15 @@ conv_base <- application_vgg16(
   input_shape = c(150, 150, 3)
 )
 
+
+
+freeze_weights(conv_base)
+
+conv_base
+
+# the higher up layers are more important and specialized
+unfreeze_weights(conv_base, from = "block3_conv1")
+
 model <- keras_model_sequential() %>% 
   conv_base %>% 
   layer_flatten() %>% 
